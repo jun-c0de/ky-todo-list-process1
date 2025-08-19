@@ -1,13 +1,13 @@
 .TodoItem {
     display: flex;
     gap: 20px;
-    padding: 10px  0;
+    padding: 10px 0;
     border-bottom: 1px solid #eee;
     /* justify-content: space-between; */
 }
 
-.TodoItem.isCompleted{
-    background-color: #eee;
+.TodoItem.isCompleted {
+    background-color: #f1f1f1;
 }
 
 .TodoItem .content {
@@ -30,7 +30,7 @@
     border: none;
     border-radius: 5px;
     padding: 5px;
-    color: #fff;
+    color: #fff
 }
 
 .updateBtn {
@@ -41,7 +41,7 @@
     background-color: rgb(255, 121, 112);
 }
 
-.TodoItem.isCompleted .content{
+.TodoItem.isCompleted .content {
     text-decoration: line-through;
     color: gray;
 }

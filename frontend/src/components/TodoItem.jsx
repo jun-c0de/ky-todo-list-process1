@@ -1,10 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import "./TodoItem.css"
-const TodoItem = ({ todo, onDelete, onUpdateChecked, onUpdateText }) => {
+const TodoItem = ({ todo, onDelete, onUpdateChecked, onUpdateTodo }) => {
 
     const [editing, setEditing] = useState(false)
     const [text, setText] = useState(todo.text)
     const isCompleted = !!todo.isCompleted
+
+    const toYmd = (d) => new Date(d).toISOString().slice(0, 10)
+    const pickDate = (t) => t?.date ?? t?.createdAt ?? new Date()
+
+    const [dateStr, setDateSter] = useState(toYmd(pickDate(todo)))
+
+    useEffect(() => {
+        if (!editing) {
+            setText(todo.text)
+            setDateSter(toYmd(pickDate(todo)))
+        }
+    }, [todo, editing])
 
     const startEdit = () => {
         setText(todo.text)
@@ -17,11 +29,18 @@ const TodoItem = ({ todo, onDelete, onUpdateChecked, onUpdateText }) => {
 
     const saveEdit = async () => {
         const next = text.trim()
+        const prevYmd = toYmd(pickDate(todo))
 
-        if (!next || next === todo.text) return setEditing(false)
+        if (!next || next === todo.text && prevYmd === dateStr) {
+            return setEditing(false)
+        }
 
-        await onUpdateText(todo._id, next)
+        const nextDateISO = new Date(`${dateStr}T00:00:00`).toISOString()
 
+        await onUpdateTodo(todo._id, {
+            text: next,
+            date: nextDateISO
+        })
         setEditing(false)
     }
 
@@ -47,7 +66,12 @@ const TodoItem = ({ todo, onDelete, onUpdateChecked, onUpdateText }) => {
                     placeholder='수정할 내용을 입력하세요'
                 />
 
-                <div className="date">{new Date(`${todo.date}`).toLocaleDateString()}</div>
+                <div className="date">
+                    <input
+                        type="date"
+                        value={dateStr}
+                        onChange={(e) => setDateSter(e.target.value)} />
+                </div>
                 <div className="btn-wrap">
                     <button className="updateBtn" onClick={saveEdit}>저장하기</button>
                     <button className="deleteBtn"
